@@ -3,6 +3,7 @@ package it.yobibit.jaxb;
 import com.sun.codemodel.JDefinedClass;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Consumer;
 
 public class LombokCommand extends Command {
 
@@ -18,5 +19,14 @@ public class LombokCommand extends Command {
         for (Class<? extends Annotation> lombokAnnotation : lombokAnnotations) {
             generatedClass.annotate(lombokAnnotation);
         }
+    }
+
+    public static LombokCommand with(String name, Class<? extends Annotation> lombokAnnotation, final Consumer<JDefinedClass> consumer) {
+        return new LombokCommand(name, lombokAnnotation) {
+            @Override
+            public void editGeneratedClass(JDefinedClass generatedClass) {
+                consumer.accept(generatedClass);
+            }
+        };
     }
 }

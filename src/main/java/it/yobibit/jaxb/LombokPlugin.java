@@ -7,6 +7,7 @@ import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.xml.sax.ErrorHandler;
 
 import java.util.ArrayList;
@@ -15,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 
-public class LombokPlugin extends Plugin  {
+public class LombokPlugin extends Plugin {
 
     public static final String OPTION_NAME = "Xlombok";
     private final Command defaultCommand;
-    private final Map<String,Command> commands = new HashMap<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
     public LombokPlugin() {
         defaultCommand = new LombokCommand("Data", Getter.class, Setter.class, EqualsAndHashCode.class, ToString.class);
@@ -32,16 +33,14 @@ public class LombokPlugin extends Plugin  {
         addLombokCommand("EqualsAndHashCode", EqualsAndHashCode.class);
         addLombokCommand("NoArgsConstructor", NoArgsConstructor.class);
         addLombokCommand("AllArgsConstructor", AllArgsConstructor.class);
+        addCommand(LombokCommand.with("AccessorsChain", Accessors.class, it -> it.annotate(Accessors.class).param("chain", true)));
+        addCommand(LombokCommand.with("AccessorsFluent", Accessors.class, it -> it.annotate(Accessors.class).param("fluent", true)));
 
-        addCommand(new LombokCommand("Builder", Builder.class) {
-            @Override
-            public void editGeneratedClass(JDefinedClass generatedClass) {
-                generatedClass.annotate(NoArgsConstructor.class);
-                generatedClass.annotate(AllArgsConstructor.class);
-                generatedClass.annotate(Builder.class).param("builderMethodName", "builderFor" + generatedClass.name());
-            }
-        });
-
+        addCommand(LombokCommand.with("Builder", Builder.class, it -> {
+            it.annotate(NoArgsConstructor.class);
+            it.annotate(AllArgsConstructor.class);
+            it.annotate(Builder.class).param("builderMethodName", "builder");
+        }));
         addCommand(new Command("removeGeneratedSourceSetters", "remove Setters from JAXB generated sources") {
             @Override
             public void editGeneratedClass(JDefinedClass generatedClass) {
@@ -50,7 +49,7 @@ public class LombokPlugin extends Plugin  {
         });
     }
 
-    private void addLombokCommand(String name, Class ... lombokAnnotation) {
+    private void addLombokCommand(String name, Class... lombokAnnotation) {
         addCommand(new LombokCommand(name, lombokAnnotation));
     }
 
