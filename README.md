@@ -21,6 +21,8 @@ XJC Plugin options:
 * -Xlombok:NoArgsConstructor - add @NoArgsConstructor annotation
 * -Xlombok:Builder - add @Builder annotation
 * -Xlombok:Data - add @Data annotation
+* -Xlombok:AccessorsChain - enable chained accessors
+* -Xlombok:AccessorsFluent - enable fluent-style accessors
 
 ### Usage with Maven
 
@@ -52,6 +54,8 @@ XJC Plugin options:
                         <argument>-Xlombok:removeGeneratedSourceSetters</argument>
                         <argument>-Xlombok:ToString</argument>
                         <argument>-Xlombok:Builder</argument>
+                        <argument>-Xlombok:Builder</argument>
+                        <argument>-Xlombok:AccessorsFluent</argument>
                     </arguments>
                 </configuration>
             </plugin>
